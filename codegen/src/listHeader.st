@@ -6,6 +6,8 @@ $headers:include(); separator="\n"$
 #include "hessian/HessianInputStream.h"
 #include "hessian/HessianOutputStream.h"
 
+namespace hessian {
+
 inline hessian::HessianInputStream&
 operator>> (hessian::HessianInputStream& in, $containerType$& container)
 {
@@ -31,4 +33,5 @@ operator<< (hessian::HessianOutputStream& out, const $containerType$& container)
     return out;
 }
 
+}//namespace hessian
 #endif

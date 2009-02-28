@@ -3,7 +3,7 @@
 #define HESSIAN_CONNECTION_H
 
 #include "hessian/MemoryStreamBuf.h"
-#include <string>
+#include <stdexcept>
 
 namespace hessian {
 
