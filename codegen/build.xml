@@ -1,0 +1,62 @@
+<!-- $Id$ -->
+<project name="hessianc" default="dist">
+  <description>
+    Hessian client C++ code generator
+  </description>  
+
+  <property name="top.dir" location=".."/>  
+  <import file="${top.dir}/property.xml"/>
+
+  <!-- classpath for compiling -->
+  <path id="compile.classpath">
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <import file="${top.dir}/target.xml"/>
+   
+  <!-- Initialize build directory structure. -->
+  <target name="init">
+    <mkdir dir="${classes.dir}"/>
+    <mkdir dir="${test.classes.dir}"/>
+    <mkdir dir="${test.reports.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+  </target>
+
+  <!-- Compile code -->
+  <target name="compile" depends="init">
+    <javac
+        srcdir="${src.dir}"
+        destdir="${classes.dir}"
+        classpathref="compile.classpath"
+        debug="on"
+        source="${javac.target}"
+        target="${javac.target}"/>
+
+    <copy todir="${classes.dir}">
+      <fileset dir="${src.dir}">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Create JAR. -->
+  <property name="jar.file" value="${dist.dir}/${ant.project.name}.jar"/>
+
+  <target name="dist" depends="compile">
+    <jar jarfile="${jar.file}" basedir="${classes.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="com.googlecode.hessianorb.Launcher"/>
+        <attribute name="Class-Path" value="antlr.jar stringtemplate.jar"/>
+      </manifest>
+    </jar>
+  </target>
+  
+  <!-- Clean up build directories. -->
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+    
+</project>

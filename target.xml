@@ -1,0 +1,67 @@
+<!-- $Id$ -->
+<project name="target">
+
+  <!-- Get Subversion last committed revision. -->
+  <target name="revision">
+    <exec
+        executable="svnversion"
+        outputproperty="REVISION"
+        failifexecutionfails="false">
+      <arg value="-c"/>
+      <arg value="${top.dir}"/>
+      <redirector>
+        <outputfilterchain>
+          <tokenfilter>
+            <replaceregex pattern="^[0-9]+:" replace=""/>
+          </tokenfilter>
+       </outputfilterchain>
+     </redirector>
+    </exec>
+    <!-- Set property if the execution failed. -->
+    <property name="REVISION" value="UNKNOWN"/>
+    <echo message="SVN revision ${REVISION}"/>
+  </target>
+
+  <!-- classpath for compiling tests -->
+  <path id="test.compile.classpath">
+    <pathelement location="${classes.dir}"/>
+    <path refid="compile.classpath"/>
+  </path>
+
+  <!-- Compile tests. -->
+  <target name="compile-test" depends="compile">
+    <javac
+        srcdir="${test.src.dir}"
+        destdir="${test.classes.dir}"
+        classpathref="test.compile.classpath"
+        debug="on"
+        source="${javac.target}"
+        target="${javac.target}"/>
+
+    <copy todir="${test.classes.dir}">
+      <fileset dir="${test.src.dir}">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Run tests. -->
+  <target name="test" depends="compile-test">
+    <junit fork="yes" haltonfailure="yes">
+      <classpath>
+        <pathelement location="${test.classes.dir}"/>
+        <path refid="test.compile.classpath"/>
+      </classpath>
+
+      <formatter type="xml"/>
+
+      <batchtest todir="${test.reports.dir}">
+        <fileset dir="${test.src.dir}">
+          <include name="**/*Test.java"/>
+          <exclude name="**/*IntegrationTest.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+</project>

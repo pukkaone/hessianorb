@@ -1,0 +1,17 @@
+PREREQUISITES
+
+ * Java Development Kit 1.5 or better
+ * Apache Ant
+ * CMake 2.4 or better
+ * libcurl
+
+
+BUILDING
+
+Starting in the top distribution directory (where this INSTALL file is
+located), run the commands:
+
+    mkdir build
+    cd build
+    cmake ..
+    make

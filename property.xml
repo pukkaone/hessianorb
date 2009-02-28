@@ -1,0 +1,13 @@
+<!-- $Id$ -->
+<project name="property">
+
+  <!--
+   To override any default properties, create a build.properties file
+   in your local directory containing the new properties.
+  -->
+  <property file="${top.dir}/build.properties"/>
+
+  <!-- Load default properties. -->
+  <property file="${top.dir}/default.properties"/>
+
+</project>

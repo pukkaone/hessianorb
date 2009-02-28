@@ -1,0 +1,10 @@
+Sample application
+
+To run the server in a local embedded servlet container, type the commands:
+
+    cd server
+    ant run
+
+To run the test client, run the executable:
+
+    sampleIntegrationTests

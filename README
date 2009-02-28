@@ -1,0 +1,20 @@
+C++ Hessian web service protocol request broker
+
+This is a framework to implement a Hessian client in C++.  A code generator
+examines type information from a Java interface to generate C++ code which can
+call the methods of the interface.  In effect, Java is the interface definition
+language for specifying the methods callable by clients.
+
+The steps for building a distributed application with a Java server and C++
+client are:
+
+  # Create a Java interface defining methods to be called by clients.
+
+  # Write a Java server which implements the Java interface and exposes it to
+    clients using Hessian.
+
+  # Generate C++ code for a class which is a client-side proxy for the server.
+    The proxy implements the interface methods by sending requests to the
+    server.
+
+  # Write a C++ client application which calls methods on the proxy.

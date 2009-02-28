@@ -1,0 +1,8 @@
+This is a testing framework derived from UnitTest++ with these modifications:
+
+  * Namespace renamed to follow this project's coding convention.
+
+  * Replaced the CHECK macros with ASSERT macros which immediately abort the
+    test on a failure. The rationale is to prevent failed tests from continuing
+    to run and possibly corrupt memory by writing through an invalid pointer,
+    thus causing subsequent tests to produce unreliable results or crash.
