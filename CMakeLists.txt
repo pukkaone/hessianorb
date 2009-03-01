@@ -7,13 +7,18 @@ include(macros.cmake)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
-# code generator
-set(HESSIANC_EXE ${EXECUTABLE_OUTPUT_PATH}/hessianc)
-add_subdirectory(codegen)
-
 # testing framework
 include_directories(testing/include)
 add_subdirectory(testing/src)
+
+# common Ant scripts
+copy_file(default.properties ${PROJECT_BINARY_DIR}/default.properties)
+copy_file(property.xml ${PROJECT_BINARY_DIR}/property.xml)
+copy_file(target.xml ${PROJECT_BINARY_DIR}/target.xml)
+
+# code generator
+set(HESSIANC_EXE ${EXECUTABLE_OUTPUT_PATH}/hessianc)
+add_subdirectory(codegen)
 
 # runtime library
 include_directories(runtime/include)
@@ -35,3 +40,14 @@ if(SVNVERSION_EXECUTABLE)
 else(SVNVERSION_EXECUTABLE)
     set(SVN_REVISION UNKNOWN)
 endif(SVNVERSION_EXECUTABLE)
+
+# Target "package_source" creates source distribution.
+set(VERSION 0.0.0)
+set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CMAKE_PROJECT_NAME}-${VERSION}.${SVN_REVISION})
+set(CPACK_SOURCE_IGNORE_FILES "/\\\\.svn/;/build/;/dist/")
+if(WIN32)
+    set(CPACK_SOURCE_GENERATOR ZIP)
+else(WIN32)
+    set(CPACK_SOURCE_GENERATOR TGZ)
+endif(WIN32)
+include(CPack)
