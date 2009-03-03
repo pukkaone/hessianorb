@@ -28,7 +28,8 @@ add_subdirectory(runtime/test)
 # sample application
 add_subdirectory(sample)
 
-# Get last committed repository revision.
+# Get last committed repository revision.  Use svnversion because it outputs
+# the M flag if the working copy has uncommitted modifications.
 find_program(SVNVERSION_EXECUTABLE svnversion
         DOC "svnversion command line client")
 if(SVNVERSION_EXECUTABLE)
@@ -42,12 +43,24 @@ else(SVNVERSION_EXECUTABLE)
 endif(SVNVERSION_EXECUTABLE)
 
 # Target "package_source" creates source distribution.
-set(VERSION 0.0.0)
-set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CMAKE_PROJECT_NAME}-${VERSION}.${SVN_REVISION})
-set(CPACK_SOURCE_IGNORE_FILES "/\\\\.svn/;/build/;/dist/")
+set(CPACK_PACKAGE_VERSION 0.0.0)
+set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}.${SVN_REVISION})
+set(CPACK_SOURCE_IGNORE_FILES "/\\\\.svn/;/build/")
 if(WIN32)
+    set(CPACK_GENERATOR ZIP)
     set(CPACK_SOURCE_GENERATOR ZIP)
 else(WIN32)
+    set(CPACK_GENERATOR TGZ)
     set(CPACK_SOURCE_GENERATOR TGZ)
 endif(WIN32)
 include(CPack)
+
+# Create a Subversion tag for the release.
+find_package(Subversion)
+if(Subversion_FOUND)
+    Subversion_WC_INFO(${CMAKE_SOURCE_DIR} SVN)
+    add_custom_target(promote
+            COMMAND svn copy -m "Release ${CPACK_PACKAGE_VERSION}"
+                    ${SVN_WC_URL}
+                    ${SVN_WC_ROOT}/tags/release-${CPACK_PACKAGE_VERSION})
+endif(Subversion_FOUND)
