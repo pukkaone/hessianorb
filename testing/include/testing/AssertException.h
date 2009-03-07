@@ -2,26 +2,25 @@
 #ifndef TESTING_ASSERTEXCEPTION_H
 #define TESTING_ASSERTEXCEPTION_H
 
-#include <exception>
+#include <stdexcept>
 
 namespace testing {
 
-class AssertException: public std::exception
+class AssertException: public std::runtime_error
 {
+	std::string m_filename;
+    int m_lineNumber;
+
 public:
     AssertException(
             char const* description, char const* filename, int lineNumber);
-    virtual ~AssertException() throw();
+    ~AssertException() throw();
 
-    virtual char const* what() const throw();
+	const char* Filename () const
+	{ return m_filename.c_str(); }
 
-    char const* Filename() const;
-    int LineNumber() const;
-
-private:
-    char m_description[512];
-    char m_filename[256];
-    int m_lineNumber;
+    int LineNumber () const
+    { return m_lineNumber; }
 };
 
 }//namespace testing
