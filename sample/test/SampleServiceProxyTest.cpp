@@ -37,6 +37,17 @@ struct Fixture
     { }
 };
 
+TEST_FIXTURE(Fixture, echoBinary)
+{
+    hessian::Binary original;
+    original.push_back(1);
+    original.push_back(2);
+    original.push_back(3);
+
+    hessian::Binary value = sampleService.echoBinary(original);
+    ASSERT(original == value);
+}
+
 TEST_FIXTURE(Fixture, echoBoolean)
 {
     bool original = false;

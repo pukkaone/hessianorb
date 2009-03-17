@@ -4,9 +4,11 @@ package com.googlecode.hessianorb.sample;
 import java.util.List;
 
 /**
- * Test service interface
+ * Sample service interface used for testing.
  */
 public interface SampleService {
+    byte[] echoBinary(byte[] value);
+
     boolean echoBoolean(boolean value);
     List<Boolean> echoBooleanList(List<Boolean> value);
     

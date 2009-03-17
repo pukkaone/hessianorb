@@ -143,10 +143,12 @@ public class SerializableGenerator {
         
         } else if (type instanceof Serializable) {
             Class serializableClass = (Class) type;
-            generate(serializableClass);
-            
-            String header = config.headerFileName(serializableClass.getSimpleName());
-            headers.addHeader(header);
+            if (config.isByteArray(serializableClass) == false) {
+                generate(serializableClass);
+                
+                String header = config.headerFileName(serializableClass.getSimpleName());
+                headers.addHeader(header);
+            }
         }
     }
 }

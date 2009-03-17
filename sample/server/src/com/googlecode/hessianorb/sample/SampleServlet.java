@@ -10,15 +10,16 @@ import org.mortbay.jetty.servlet.Context;
  
 public class SampleServlet extends HessianServlet implements SampleService {
     private static final long serialVersionUID = 1L;
-
-    public SampleServlet() {
-        setDebug(true);
-    }
     
     private static final List<User> USERS = Arrays.asList(
             new User(1, "Bruce", "Banner", "1 Alpha", "Alphaville", "AA", "A1A1A1"),
             new User(2, "Johnny", "Storm", "2 Bravo", "Bravoville", "BB", "B2B2B2"),
             new User(3, "Reed", "Richards", "3 Charlie", "Charlieville", "CC", "C3C3C3")); 
+    
+    @Override
+    public byte[] echoBinary(byte[] value) {
+        return value;
+    }
     
     @Override
     public boolean echoBoolean(boolean value) {

@@ -93,6 +93,13 @@ public class GeneratorConfig {
         return ListGenerator.CONTAINER + '<' + toCppType(elementType) + '>';
     }
     
+    /**
+     * Checks if the {@code Class} represents a byte array.
+     */
+    public boolean isByteArray(Class clazz) {
+        return clazz.isArray() && clazz.getComponentType() == Byte.TYPE;
+    }
+
     public String toCppType(Type type) {
         if (type == Boolean.TYPE || type == Boolean.class) {
             return "bool";
@@ -100,7 +107,8 @@ public class GeneratorConfig {
                 || type == String.class)
         {
             return "std::string";
-        } else if (type == Integer.TYPE || type == Integer.class
+        } else if (type == Byte.TYPE || type == Byte.class
+                || type == Integer.TYPE || type == Integer.class
                 || type == Short.TYPE || type == Short.class)
         {
             return "hessian::Int";
@@ -118,6 +126,9 @@ public class GeneratorConfig {
             return toCppContainerType(elementType);
         } else if (type instanceof Serializable) {
             Class serializableClass = (Class) type;
+            if (isByteArray(serializableClass)) {
+                return "hessian::Binary";
+            }
             return getNamespace() + "::" + serializableClass.getSimpleName();
         } else {
             throw new GeneratorException("Cannot map type " + type + " to C++");
