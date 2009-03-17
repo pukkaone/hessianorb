@@ -5,3 +5,5 @@ add_executable(hessianUnitTests
         runAllTests.cpp
 )
 target_link_libraries(hessianUnitTests hessianorb testing)
+
+add_test(hessianUnitTests ${EXECUTABLE_OUTPUT_PATH}/hessianUnitTests)

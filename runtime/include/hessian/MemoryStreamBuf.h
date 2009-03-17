@@ -8,7 +8,7 @@
 namespace hessian {
 
 /**
- * A streambuf implementation similar to std::strstreambuf except here you don't
+ * A streambuf implementation similar to std::strstreambuf except you don't
  * have to remember to unfreeze the buffer to prevent a memory leak.
  */
 class MemoryStreamBuf: public std::streambuf
@@ -26,7 +26,7 @@ public:
     { return &buffer_[0]; }
 
     std::streamsize pcount() const
-    { return buffer_.size(); }
+    { return pptr() - &buffer_[0]; }
 };
 
 }//namespace hessian
