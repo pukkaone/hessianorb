@@ -24,12 +24,12 @@ class Hessian1OutputStream
     // Writes 16-bit length followed by bytes.
     void write(
             std::string::size_type length,
-            std::string::size_type nBytes,
-            const char* pBytes);
+            const char* pBegin,
+            const char* pEnd);
 
     // Writes 16-bit length followed by bytes.  Length equals number of bytes.
-    void write (std::string::size_type nBytes, const char* pBytes)
-    { write(nBytes, nBytes, pBytes); }
+    void write (std::string::size_type nBytes, const char* pBegin)
+    { write(nBytes, pBegin, pBegin + nBytes); }
 
 public:
     Hessian1OutputStream ():

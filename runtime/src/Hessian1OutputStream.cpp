@@ -1,50 +1,9 @@
 // $Id$
 #include "hessian/Hessian1OutputStream.h"
 
-namespace {
-
-// Counts number of UTF-8 encoded characters.  Assumes char is signed.
-
-std::string::size_type
-countUTF8Char (const std::string& s)
-{
-    std::string::size_type count = 0;
-
-    std::string::size_type iBeginAscii = 0;
-    std::string::size_type i = 0;
-    std::string::size_type size = s.size();
-    while (i < size && s[i] >= 0) {
-ascii:
-        ++i;
-    }
-
-    count += (i - iBeginAscii);
-
-    while (i < size) {
-        if (s[i] >= 0) {
-            iBeginAscii = i;
-            goto ascii;
-        } else {
-            switch (s[i] & 0xF0) {
-            case 0xE0:
-                i += 3;
-                break;
-            case 0xF0:
-                i += 4;
-                break;
-            default:
-                i += 2;
-            }
-        }
-        ++count;
-    }
-
-    return count;
-}
-
-}//namespace
-
 namespace hessian {
+
+const std::string::size_type CHUNK_MAX = 65535;
 
 void
 Hessian1OutputStream::write (hessian::Long value)
@@ -62,12 +21,12 @@ Hessian1OutputStream::write (hessian::Long value)
 void
 Hessian1OutputStream::write (
         std::string::size_type length,
-        std::string::size_type nBytes,
-        const char* pBytes)
+        const char* pBegin,
+        const char* pEnd)
 {
     write(static_cast<char>((length >> 8) & 0xFF));
     write(static_cast<char>(length & 0xFF));
-    buffer_.sputn(pBytes, nBytes);
+    buffer_.sputn(pBegin, pEnd - pBegin);
 }
 
 void
@@ -119,8 +78,6 @@ Hessian1OutputStream::endCall ()
 Hessian1OutputStream&
 Hessian1OutputStream::operator<< (const hessian::Binary& value)
 {
-    const std::string::size_type CHUNK_MAX = 65535;
-
     const char *pValue = &value[0];
     std::string::size_type nBytes = value.size();
     while (nBytes > CHUNK_MAX) {
@@ -178,12 +135,71 @@ Hessian1OutputStream::operator<< (hessian::Long value)
     return *this;
 }
 
+namespace {
+
+// Counts the number of UTF-8 encoded characters until the end of the range
+// or the maximum chunk length is reached.  Assumes char is signed.
+// Return pointer to byte after last byte examined.
+
+const char*
+countUTF8Char (
+        const char* pSrc,
+        const char* pEnd,
+        std::string::size_type& retCount)
+{
+    std::string::size_type count = 0;
+
+    while (pSrc < pEnd && *pSrc >= 0) {
+ascii:
+        ++pSrc;
+
+        if (++count >= CHUNK_MAX) {
+            retCount = count;
+            return pSrc;
+        }
+    }
+
+    while (pSrc < pEnd) {
+        if (*pSrc >= 0) {
+            goto ascii;
+        } else {
+            switch (*pSrc & 0xF0) {
+            case 0xE0:
+                pSrc += 3;
+                break;
+            case 0xF0:
+                pSrc += 4;
+                break;
+            default:
+                pSrc += 2;
+            }
+        }
+
+        if (++count >= CHUNK_MAX) {
+            break;
+        }
+    }
+
+    retCount = count;
+    return pSrc;
+}
+
+}//namespace
+
 Hessian1OutputStream&
 Hessian1OutputStream::operator<< (const std::string& value)
 {
-    // TODO: Allow sending more than 65535 Unicode characters in a string.
-    write('S');
-    write(countUTF8Char(value), value.size(), value.data());
+    const char* pSrcBegin = value.data();
+    const char* pSrcEnd = pSrcBegin + value.size();
+    do {
+        std::string::size_type count;
+        const char* pEnd = countUTF8Char(pSrcBegin, pSrcEnd, count);
+        write((pEnd < pSrcEnd) ? 's' : 'S');
+        write(count, pSrcBegin, pEnd);
+
+        pSrcBegin = pEnd;
+    } while (pSrcBegin < pSrcEnd);
+
     return *this;
 }
 

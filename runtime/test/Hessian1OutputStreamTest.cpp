@@ -21,7 +21,7 @@ TEST_FIXTURE(Fixture, writeInt)
     ASSERT_EQUAL(sizeof(EXPECTED) - 1, output.rdbuf()->pcount());
     ASSERT(std::equal(
             EXPECTED,
-            EXPECTED + sizeof(EXPECTED) -1,
+            EXPECTED + sizeof(EXPECTED) - 1,
             output.rdbuf()->str()));
 }
 
@@ -34,7 +34,48 @@ TEST_FIXTURE(Fixture, writeLong)
     ASSERT_EQUAL(sizeof(EXPECTED) - 1, output.rdbuf()->pcount());
     ASSERT(std::equal(
             EXPECTED,
-            EXPECTED + sizeof(EXPECTED) -1,
+            EXPECTED + sizeof(EXPECTED) - 1,
+            output.rdbuf()->str()));
+}
+
+TEST_FIXTURE(Fixture, writeString)
+{
+    std::string value(
+            "A"
+            "\xD0\x80"
+            "\xE8\x80\x80"
+            "\xF4\x80\x80\x80"
+            "B",
+            11);
+    output << value;
+
+    const char EXPECTED[] =
+            "S\x00\x05"
+            "A"
+            "\xD0\x80"
+            "\xE8\x80\x80"
+            "\xF4\x80\x80\x80"
+            "B";
+    ASSERT_EQUAL(sizeof(EXPECTED) - 1, output.rdbuf()->pcount());
+    ASSERT(std::equal(
+            EXPECTED,
+            EXPECTED + sizeof(EXPECTED) - 1,
+            output.rdbuf()->str()));
+}
+
+TEST_FIXTURE(Fixture, writeStringHuge)
+{
+    std::string value(65536, 'X');
+    output << value;
+
+    std::string expected =
+            "s\xFF\xFF" +
+            std::string(65535, 'X') +
+            std::string("S\x00\x01X", 4);
+    ASSERT_EQUAL(expected.size(), output.rdbuf()->pcount());
+    ASSERT(std::equal(
+            expected.begin(),
+            expected.end(),
             output.rdbuf()->str()));
 }
 
