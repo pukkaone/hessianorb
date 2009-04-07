@@ -90,6 +90,25 @@ TEST_FIXTURE(Fixture, echoCharList)
     ASSERT(original == value);
 }
 
+TEST_FIXTURE(Fixture, echoEnum)
+{
+    Season origValue;
+    
+    Season value = sampleService.echoEnum(origValue);
+}
+
+TEST_FIXTURE(Fixture, echoEnumList)
+{
+    Season origValue;
+
+    List<Season> origValues;
+    origValues.push_back(origValue);
+    
+    List<Season> values = sampleService.echoEnumList(origValues);
+
+    List<Season>::iterator pValue = values.begin();
+}
+
 TEST_FIXTURE(Fixture, echoInt)
 {
     hessian::Int original = 1;

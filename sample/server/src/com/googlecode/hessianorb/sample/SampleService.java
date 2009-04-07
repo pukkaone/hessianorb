@@ -15,6 +15,9 @@ public interface SampleService {
     char echoChar(char value);
     List<Character> echoCharList(List<Character> value);
     
+    Season echoEnum(Season value);
+    List<Season> echoEnumList(List<Season> value);
+    
     int echoInt(int value);
     List<Integer> echoIntList(List<Integer> value);
     

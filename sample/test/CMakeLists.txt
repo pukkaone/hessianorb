@@ -7,6 +7,7 @@ set(GENERATED_SOURCE_DIR ${GENERATED_DIR}/src)
 set(GENERATED_SOURCES
         ${GENERATED_SOURCE_DIR}/PostalAddress.cpp
         ${GENERATED_SOURCE_DIR}/SampleServiceProxy.cpp
+        ${GENERATED_SOURCE_DIR}/Season.cpp
         ${GENERATED_SOURCE_DIR}/User.cpp
 )
 

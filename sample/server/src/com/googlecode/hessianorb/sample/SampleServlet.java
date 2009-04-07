@@ -42,6 +42,16 @@ public class SampleServlet extends HessianServlet implements SampleService {
     }
     
     @Override
+    public Season echoEnum(Season value) {
+        return value;
+    }
+
+    @Override
+    public List<Season> echoEnumList(List<Season> value) {
+        return value;
+    }
+    
+    @Override
     public int echoInt(int value) {
         return value;
     }
