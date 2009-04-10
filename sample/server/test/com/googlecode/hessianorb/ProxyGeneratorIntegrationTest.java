@@ -7,8 +7,7 @@ public class ProxyGeneratorIntegrationTest {
 
     @Test
     public void testGenerateProxy() {
-        final String GENERATED_DIR =
-                "/branches/release/cpp/hessianorb/sample/cpp/test/generated/";
+        final String GENERATED_DIR = "/work/generated/";
         ProxyGenerator generator = new ProxyGenerator(
                 "sample", GENERATED_DIR + "include", GENERATED_DIR + "src");
         

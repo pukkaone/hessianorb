@@ -103,33 +103,41 @@ public class GeneratorConfig {
     public String toCppType(Type type) {
         if (type == Boolean.TYPE || type == Boolean.class) {
             return "bool";
+            
         } else if (type == Character.TYPE || type == Character.class
                 || type == String.class)
         {
             return "std::string";
+            
         } else if (type == Byte.TYPE || type == Byte.class
                 || type == Integer.TYPE || type == Integer.class
                 || type == Short.TYPE || type == Short.class)
         {
             return "hessian::Int";
+            
         } else if (type == Double.TYPE || type == Double.class
                 || type == Float.TYPE || type == Float.class)
         {
             return "double";
+            
         } else if (type == Long.TYPE || type == Long.class) {
             return "hessian::Long";
+            
         } else if (type == Void.TYPE) {
             return "void";
+            
         } else if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;  
             Type elementType = pt.getActualTypeArguments()[0];  
             return toCppContainerType(elementType);
+            
         } else if (type instanceof Serializable) {
             Class serializableClass = (Class) type;
             if (isByteArray(serializableClass)) {
                 return "hessian::Binary";
             }
             return getNamespace() + "::" + serializableClass.getSimpleName();
+            
         } else {
             throw new GeneratorException("Cannot map type " + type + " to C++");
         }

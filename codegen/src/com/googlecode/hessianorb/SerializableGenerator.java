@@ -110,6 +110,11 @@ public class SerializableGenerator {
         generateSource(serializableClass);
     }
     
+    private void generateEnum(Class<? extends Enum<?>> enumClass) {
+        EnumGenerator generator = new EnumGenerator(config);
+        generator.generate(enumClass);
+    }
+    
     /**
      * If the type is a serializable class, generates the C++ code for it.
      * 
@@ -143,8 +148,20 @@ public class SerializableGenerator {
         
         } else if (type instanceof Serializable) {
             Class serializableClass = (Class) type;
-            if (config.isByteArray(serializableClass) == false) {
-                generate(serializableClass);
+            if (config.isByteArray(serializableClass)) {
+                // do nothing
+            } else {
+                if (!serializableClass.isEnum()
+                  && serializableClass.getSuperclass().isEnum())
+                {
+                    serializableClass = serializableClass.getSuperclass();
+                }
+                
+                if (serializableClass.isEnum()) {
+                    generateEnum(serializableClass);
+                } else {
+                    generate(serializableClass);
+                }
                 
                 String header = config.headerFileName(serializableClass.getSimpleName());
                 headers.addHeader(header);
