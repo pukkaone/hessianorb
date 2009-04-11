@@ -7,7 +7,7 @@ namespace {
 
 const std::string KEY_NAME("name");
 
-class EnumToNameMap: public std::map<$enum$, std::string>
+class EnumToNameMap: public std::map<$namespace$::$enum$, std::string>
 {
 public:
     EnumToNameMap ()
@@ -16,14 +16,14 @@ public:
     }
 };
 
-const EnumToNameMap &
+EnumToNameMap &
 enumToNameMap ()
 {
     static EnumToNameMap map;
     return map;
 }
 
-class NameToEnumMap: public std::map<std::string, $enum$>
+class NameToEnumMap: public std::map<std::string, $namespace$::$enum$>
 {
 public:
     NameToEnumMap ()
@@ -32,7 +32,7 @@ public:
     }
 };
 
-const NameToEnumMap &
+NameToEnumMap &
 nameToEnumMap ()
 {
     static NameToEnumMap map;

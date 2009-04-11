@@ -1,1 +1,1 @@
-insert(value_type("$it$", $it$));
+insert(value_type($namespace$::$it$, "$it$"));
