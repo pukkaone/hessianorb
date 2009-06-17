@@ -5,6 +5,7 @@ import com.caucho.hessian.server.HessianServlet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
  
@@ -72,13 +73,18 @@ public class SampleServlet extends HessianServlet implements SampleService {
     }
 
     @Override
-    public User echoUser(User user) {
-        return user;
+    public Map<String, String> echoMap(Map<String, String> value) {
+        return value;
     }
 
     @Override
-    public List<User> echoUserList(List<User> users) {
-        return users;
+    public User echoUser(User value) {
+        return value;
+    }
+
+    @Override
+    public List<User> echoUserList(List<User> value) {
+        return value;
     }
 
     @Override

@@ -21,11 +21,11 @@ public class Main {
                 "\n" +
                 "options:\n" +
                 "\n" +
-                "-header-dest <directory>\n" +
+                OPTION_HEADER_DEST + " <directory>\n" +
                 "    Specify directory where C++ header files will be generated.\n" +
                 "    Default is the current working directory.\n" +
                 "\n" +
-                "-source-dest <directory>\n" +
+                OPTION_SOURCE_DEST + " <directory>\n" +
                 "    Specify directory where C++ source files will be generated.\n" +
                 "    Default is the current working directory.\n");
     }
@@ -91,7 +91,11 @@ public class Main {
         }
         catch (RuntimeException e) {
             exitCode = EXIT_FAILURE;
-            System.err.println(e.getMessage());
+            String message = e.getMessage();
+            if (message == null) {
+                message = e.toString();
+            }
+            System.err.println(message);
         }
         catch (Throwable t) {
             exitCode = EXIT_FAILURE;

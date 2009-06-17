@@ -2,6 +2,7 @@
 package com.googlecode.hessianorb.sample;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Sample service interface used for testing.
@@ -23,6 +24,8 @@ public interface SampleService {
     
     String echoString(String value);
     List<String> echoStringList(List<String> value);
+
+    Map<String, String> echoMap(Map<String, String> map);
     
     User echoUser(User user);
     List<User> echoUserList(List<User> users);
