@@ -24,7 +24,7 @@ public class ProxyGenerator {
     }
 
     private StringTemplate getTemplate(
-            String templateName, Class interfaceClass, Headers headers)
+            String templateName, Class<?> interfaceClass, Headers headers)
     {
         String interfaceName = interfaceClass.getSimpleName();
         
@@ -40,7 +40,7 @@ public class ProxyGenerator {
         return template;
     }
     
-    private void generateInterfaceHeader(Class interfaceClass) {
+    private void generateInterfaceHeader(Class<?> interfaceClass) {
         String interfaceName = interfaceClass.getSimpleName();
 
         StringTemplate interfaceHeader = getTemplate(
@@ -51,7 +51,7 @@ public class ProxyGenerator {
         config.writeHeaderFile(interfaceName, code);
     }
     
-    private void generateProxyHeader(Class interfaceClass) {
+    private void generateProxyHeader(Class<?> interfaceClass) {
         String interfaceName = interfaceClass.getSimpleName();
         String className = interfaceName + PROXY_SUFFIX;
         
@@ -67,7 +67,7 @@ public class ProxyGenerator {
         config.writeHeaderFile(className, code);
     }
     
-    private void generateProxySource(Class interfaceClass) {
+    private void generateProxySource(Class<?> interfaceClass) {
         String interfaceName = interfaceClass.getSimpleName();
         String className = interfaceName + PROXY_SUFFIX;
         
@@ -82,7 +82,7 @@ public class ProxyGenerator {
         config.writeSourceFile(className, code);
     }
     
-    public void generate(Class remoteInterface) {
+    public void generate(Class<?> remoteInterface) {
         config.createGeneratedDirectories();
         generateInterfaceHeader(remoteInterface);
         generateProxyHeader(remoteInterface);

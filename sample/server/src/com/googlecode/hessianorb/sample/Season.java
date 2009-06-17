@@ -6,6 +6,6 @@ import java.io.Serializable;
 /**
  * Seasons of the year.
  */
-public enum Season {
+public enum Season implements Serializable {
     WINTER, SPRING, SUMMER, FALL
 }

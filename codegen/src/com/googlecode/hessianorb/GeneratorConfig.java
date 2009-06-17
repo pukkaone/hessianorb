@@ -96,7 +96,7 @@ public class GeneratorConfig {
     /**
      * Checks if the {@code Class} represents a byte array.
      */
-    public boolean isByteArray(Class clazz) {
+    public boolean isByteArray(Class<?> clazz) {
         return clazz.isArray() && clazz.getComponentType() == Byte.TYPE;
     }
 
@@ -132,7 +132,7 @@ public class GeneratorConfig {
             return toCppContainerType(elementType);
             
         } else if (type instanceof Serializable) {
-            Class serializableClass = (Class) type;
+            Class<?> serializableClass = (Class<?>) type;
             if (isByteArray(serializableClass)) {
                 return "hessian::Binary";
             }

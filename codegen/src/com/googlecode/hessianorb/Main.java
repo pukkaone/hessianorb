@@ -67,7 +67,7 @@ public class Main {
                 new ProxyGenerator(namespace, headerDestDir, sourceDestDir);
         for (; i < args.length; ++i) {
             try {
-                Class remoteInterface =
+                Class<?> remoteInterface =
                         Thread.currentThread().getContextClassLoader().loadClass(args[i]);
                 generator.generate(remoteInterface);
             }

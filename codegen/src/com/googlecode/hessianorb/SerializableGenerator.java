@@ -23,8 +23,8 @@ public class SerializableGenerator {
     }
 
     // Generates C++ code for any serializable fields of the class.
-    private void generateSerializableFields(Class serializableClass, Headers headers) {
-        Class superClass = serializableClass.getSuperclass();
+    private void generateSerializableFields(Class<?> serializableClass, Headers headers) {
+        Class<?> superClass = serializableClass.getSuperclass();
         if (superClass != null) {
             generateSerializableFields(superClass, headers);
         }
@@ -39,8 +39,8 @@ public class SerializableGenerator {
         }
     }
 
-    private void addFields(StringTemplate template, Class serializableClass) {
-        Class superClass = serializableClass.getSuperclass();
+    private void addFields(StringTemplate template, Class<?> serializableClass) {
+        Class<?> superClass = serializableClass.getSuperclass();
         if (superClass != null) {
             addFields(template, superClass);
         }
@@ -61,7 +61,7 @@ public class SerializableGenerator {
     
     private StringTemplate getTemplate(
             String templateName,
-            Class serializableClass,
+            Class<?> serializableClass,
             Headers headers)
     {
         String className = serializableClass.getSimpleName();
@@ -75,7 +75,7 @@ public class SerializableGenerator {
         return template;
     }
     
-    private void generateHeader(Class serializableClass, Headers headers) {
+    private void generateHeader(Class<?> serializableClass, Headers headers) {
         String className = serializableClass.getSimpleName();
         
         StringTemplate serializableHeader = getTemplate(
@@ -86,7 +86,7 @@ public class SerializableGenerator {
         config.writeHeaderFile(className, code);
     }
     
-    private void generateSource(Class serializableClass) {
+    private void generateSource(Class<?> serializableClass) {
         String className = serializableClass.getSimpleName();
 
         Headers myHeaders = new Headers();
@@ -99,7 +99,7 @@ public class SerializableGenerator {
         config.writeSourceFile(className, code);
     }
     
-    private void generate(Class serializableClass) {
+    private void generate(Class<?> serializableClass) {
         Headers myHeaders = new Headers();
         myHeaders.addHeader("hessian/types.h");
         
@@ -124,6 +124,7 @@ public class SerializableGenerator {
      *            collection to which will be added any headers needed to use
      *            the serializable class
      */
+    @SuppressWarnings("unchecked")
     public void generate(Type type, Headers headers) {
         if (type == Boolean.TYPE
          || type == Character.TYPE
@@ -147,7 +148,7 @@ public class SerializableGenerator {
             headers.addHeader(header);
         
         } else if (type instanceof Serializable) {
-            Class serializableClass = (Class) type;
+            Class<?> serializableClass = (Class<?>) type;
             if (config.isByteArray(serializableClass)) {
                 // do nothing
             } else {
@@ -158,7 +159,7 @@ public class SerializableGenerator {
                 }
                 
                 if (serializableClass.isEnum()) {
-                    generateEnum(serializableClass);
+                    generateEnum((Class<? extends Enum<?>>) serializableClass);
                 } else {
                     generate(serializableClass);
                 }

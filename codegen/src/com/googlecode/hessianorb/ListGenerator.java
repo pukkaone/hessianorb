@@ -38,7 +38,7 @@ public class ListGenerator {
         if (elementType == Character.class || elementType == String.class) {
             headers.addStandardHeader("string");
         } else {
-            Class elementClass = (Class) elementType;
+            Class<?> elementClass = (Class<?>) elementType;
             headers.addHeader(config.headerFileName(elementClass.getSimpleName()));
         }
     }

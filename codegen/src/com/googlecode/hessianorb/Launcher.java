@@ -86,7 +86,7 @@ public class Launcher {
         }
         
         try {
-            Class mainClass = loader.loadClass(mainClassName);
+            Class<?> mainClass = loader.loadClass(mainClassName);
             Method mainMethod = mainClass.getMethod("main", newArgs.getClass());
             mainMethod.invoke(null, (Object) newArgs);
         }
