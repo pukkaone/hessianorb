@@ -3,12 +3,13 @@
 #define TESTING_ASSERTEXCEPTION_H
 
 #include <stdexcept>
+#include <string>
 
 namespace testing {
 
 class AssertException: public std::runtime_error
 {
-	std::string m_filename;
+    std::string m_filename;
     int m_lineNumber;
 
 public:
@@ -16,8 +17,8 @@ public:
             char const* description, char const* filename, int lineNumber);
     ~AssertException() throw();
 
-	const char* Filename () const
-	{ return m_filename.c_str(); }
+    const char* Filename () const
+    { return m_filename.c_str(); }
 
     int LineNumber () const
     { return m_lineNumber; }
