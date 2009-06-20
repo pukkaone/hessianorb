@@ -2,12 +2,13 @@
 $headers:include(); separator="\n"$
 #include <map>
 #include <string>
+#include <vector>
 
 namespace {
 
 const std::string KEY_NAME("name");
 
-class EnumToNameMap: public std::map<$namespace$::$class$::Enum, std::string>
+class EnumToNameMap: public std::vector<std::string>
 {
 public:
     EnumToNameMap ()
