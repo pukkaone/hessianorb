@@ -26,7 +26,7 @@ public class EnumGenerator {
         StringTemplate template = group.getInstanceOf(templateName);
         template.setAttribute("headers", headers);
         template.setAttribute("namespace", config.getNamespace());
-        template.setAttribute("enum", enumClass.getSimpleName());
+        template.setAttribute("class", enumClass.getSimpleName());
         for (Enum<?> constant : enumClass.getEnumConstants()) {
             template.setAttribute("enumerator", constant.name());
         }

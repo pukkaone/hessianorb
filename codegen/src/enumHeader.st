@@ -7,13 +7,16 @@
 
 namespace $namespace$ {
 
-enum $enum$
+struct $class$
 {
-    $enumerator; separator=",\n"$
+    enum Enum
+    {
+	$enumerator; separator=",\n"$
+    };
 };
 
-hessian::HessianInputStream& operator>>(hessian::HessianInputStream& in, $enum$& value);
-hessian::HessianOutputStream& operator<<(hessian::HessianOutputStream& out, $enum$ value);
+hessian::HessianInputStream& operator>>(hessian::HessianInputStream& in, $class$::Enum& value);
+hessian::HessianOutputStream& operator<<(hessian::HessianOutputStream& out, $class$::Enum value);
 
 }//namespace $namespace$
 #endif

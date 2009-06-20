@@ -92,23 +92,23 @@ TEST_FIXTURE(Fixture, echoCharList)
 
 TEST_FIXTURE(Fixture, echoEnum)
 {
-    Season origValue = WINTER;
-    Season value = sampleService.echoEnum(origValue);
+    Season::Enum origValue = Season::WINTER;
+    Season::Enum value = sampleService.echoEnum(origValue);
     ASSERT_EQUAL(origValue, value);
 
-    origValue = SPRING;
+    origValue = Season::SPRING;
     value = sampleService.echoEnum(origValue);
     ASSERT_EQUAL(origValue, value);
 }
 
 TEST_FIXTURE(Fixture, echoEnumList)
 {
-    Season origValue = WINTER;
+    Season::Enum origValue = Season::WINTER;
 
-    List<Season> origValues;
+    List<Season::Enum> origValues;
     origValues.push_back(origValue);
     
-    List<Season> values = sampleService.echoEnumList(origValues);
+    List<Season::Enum> values = sampleService.echoEnumList(origValues);
     ASSERT(origValues == values);
 }
 

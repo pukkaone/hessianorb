@@ -133,11 +133,18 @@ public class GeneratorConfig {
             
         } else if (type instanceof Serializable) {
             Class<?> serializableClass = (Class<?>) type;
+
             if (isByteArray(serializableClass)) {
                 return "hessian::Binary";
             }
-            return getNamespace() + "::" + serializableClass.getSimpleName();
-            
+
+            String cppType =
+                    getNamespace() + "::" + serializableClass.getSimpleName();
+            if (serializableClass.isEnum()) {
+                cppType += "::Enum";
+            }
+            return cppType;
+
         } else {
             throw new GeneratorException("Cannot map type " + type + " to C++");
         }

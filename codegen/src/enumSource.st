@@ -7,7 +7,7 @@ namespace {
 
 const std::string KEY_NAME("name");
 
-class EnumToNameMap: public std::map<$namespace$::$enum$, std::string>
+class EnumToNameMap: public std::map<$namespace$::$class$::Enum, std::string>
 {
 public:
     EnumToNameMap ()
@@ -23,7 +23,7 @@ enumToNameMap ()
     return map;
 }
 
-class NameToEnumMap: public std::map<std::string, $namespace$::$enum$>
+class NameToEnumMap: public std::map<std::string, $namespace$::$class$::Enum>
 {
 public:
     NameToEnumMap ()
@@ -44,7 +44,7 @@ nameToEnumMap ()
 namespace $namespace$ {
 
 hessian::HessianInputStream&
-operator>> (hessian::HessianInputStream& in, $enum$& value)
+operator>> (hessian::HessianInputStream& in, $class$::Enum& value)
 {
     in.beginObject();
     while (in.peek() != 'z') {
@@ -65,7 +65,7 @@ operator>> (hessian::HessianInputStream& in, $enum$& value)
 }
 
 hessian::HessianOutputStream&
-operator<< (hessian::HessianOutputStream& out, $enum$ value)
+operator<< (hessian::HessianOutputStream& out, $class$::Enum value)
 {
     static char TYPE_NAME[] = "$javaClass$";
     out.beginObject(TYPE_NAME, sizeof(TYPE_NAME) - 1);
