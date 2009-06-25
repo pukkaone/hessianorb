@@ -11,8 +11,8 @@ import java.lang.reflect.Type;
 /**
  * Controls details of how code is generated based on configuration settings. 
  */
-public class GeneratorConfig {
-    private static final String NEWLINE = System.getProperty("line.separator");
+public class GeneratorFactory {
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String HEADER_SUFFIX = ".h";
     private static final String SOURCE_SUFFIX = ".cpp";
 
@@ -20,7 +20,7 @@ public class GeneratorConfig {
     private File headerDir;
     private File sourceDir;
 
-    public GeneratorConfig(
+    public GeneratorFactory(
             String namespace, String headerDir, String sourceDir)
     {
         this.namespace = namespace;
@@ -49,48 +49,31 @@ public class GeneratorConfig {
     }
     
     /**
-     * Constructs a header file name based on a class name.
+     * Constructs a header file name from a base name by prepending a directory
+     * path and appending a file name extension.
      * 
-     * @param className
-     *            base class name
+     * @param baseName
+     *            base file name
      * @return header file name
      */
-    public String headerFileName(String className) {
-        return getNamespace() + '/' + className + getHeaderSuffix();
+    public String headerFileName(String baseName) {
+        return getNamespace() + '/' + baseName + getHeaderSuffix();
     }
 
     /**
-     * Constructs a guard macro name based on a class name.
+     * Constructs a guard macro name from base name.
      * 
-     * @param className
-     *            base class name
+     * @param baseName
+     *            base name
      * @return guard macro name
      */
-    public String guardName(String className) {
-        String guard = headerFileName(className).toUpperCase();
-        return guard.replaceAll("[^A-Z]", "_");
+    public String guardName(String baseName) {
+        String guard = headerFileName(baseName).toUpperCase();
+        return guard.replaceAll("[^A-Z0-9_]", "_");
     }
     
     private String sourceFileName(String className) {
         return className + getSourceSuffix();
-    }
-
-    private String capitalize(String name) {
-        return name.substring(0, 1).toUpperCase() + name.substring(1);
-    }
-    
-    public String listClassName(Type elementType) {
-        String baseName = toCppType(elementType);
-        String[] parts = baseName.split("::");
-        return capitalize(parts[parts.length - 1]) + "List";
-    }
-    
-    public String listHeaderFileName(Type elementType) {
-        return headerFileName(listClassName(elementType));
-    }
-    
-    public String toCppContainerType(Type elementType) {
-        return ListGenerator.CONTAINER + '<' + toCppType(elementType) + '>';
     }
     
     /**
@@ -100,85 +83,54 @@ public class GeneratorConfig {
         return clazz.isArray() && clazz.getComponentType() == Byte.TYPE;
     }
 
-    public String toCppType(Type type) {
+    @SuppressWarnings("unchecked")
+    public Generator getGenerator(Type type) {
         if (type == Boolean.TYPE || type == Boolean.class) {
-            return "bool";
+            return new PrimitiveGenerator("bool");
             
         } else if (type == Character.TYPE || type == Character.class
                 || type == String.class)
         {
-            return "std::string";
+            return new ClassGenerator("std::string", "<string>");
             
         } else if (type == Byte.TYPE || type == Byte.class
                 || type == Integer.TYPE || type == Integer.class
                 || type == Short.TYPE || type == Short.class)
         {
-            return "hessian::Int";
+            return new PrimitiveGenerator("hessian::Int");
             
         } else if (type == Double.TYPE || type == Double.class
                 || type == Float.TYPE || type == Float.class)
         {
-            return "double";
+            return new PrimitiveGenerator("double");
             
         } else if (type == Long.TYPE || type == Long.class) {
-            return "hessian::Long";
+            return new PrimitiveGenerator("hessian::Long");
             
         } else if (type == Void.TYPE) {
-            return "void";
+            return new PrimitiveGenerator("void");
             
         } else if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;  
             Type elementType = pt.getActualTypeArguments()[0];  
-            return toCppContainerType(elementType);
+            return new ListGenerator(this, elementType);
             
         } else if (type instanceof Serializable) {
             Class<?> serializableClass = (Class<?>) type;
 
             if (isByteArray(serializableClass)) {
-                return "hessian::Binary";
+                return new ClassGenerator("hessian::Binary", null);
             }
 
-            String cppType =
-                    getNamespace() + "::" + serializableClass.getSimpleName();
             if (serializableClass.isEnum()) {
-                cppType += "::Enum";
+                return new EnumGenerator(
+                        this, (Class<? extends Enum<?>>) serializableClass);
             }
-            return cppType;
+            return new SerializableGenerator(this, serializableClass);
 
         } else {
             throw new GeneratorException("Cannot map type " + type + " to C++");
         }
-    }
-
-    /**
-     * Checks if the Java type maps to a C++ primitive type.
-     * 
-     * @param type
-     *            Java type
-     * @return true if type is primitive
-     */
-    public boolean isCppPrimitive(Type type) {
-        return type == Boolean.TYPE || type == Boolean.class
-            || type == Double.TYPE || type == Double.class
-            || type == Float.TYPE || type == Float.class
-            || type == Integer.TYPE || type == Integer.class
-            || type == Long.TYPE || type == Long.class
-            || type == Short.TYPE || type == Short.class;
-    }
-
-    /**
-     * Maps Java type to C++ parameter type.
-     * 
-     * @param type
-     *            Java type
-     * @return C++ type specifier
-     */
-    public String toCppParameterType(Type type) {
-        if (isCppPrimitive(type)) {
-            return toCppType(type);
-        }
-        
-        return "const " + toCppType(type) + '&';
     }
 
     public void createGeneratedDirectories() {
@@ -193,7 +145,7 @@ public class GeneratorConfig {
         try {
             FileWriter writer = new FileWriter(file);
             writer.write(content);
-            writer.write(NEWLINE);
+            writer.write(LINE_SEPARATOR);
             writer.close();
         }
         catch (IOException e) {
@@ -201,11 +153,30 @@ public class GeneratorConfig {
         }
     }
     
-    public void writeHeaderFile(String className, String content) {
-        writeFile(getHeaderDir(), headerFileName(className), content);
+    public void writeHeaderFile(String baseName, String content) {
+        writeFile(getHeaderDir(), headerFileName(baseName), content);
     }
     
-    public void writeSourceFile(String className, String content) {
-        writeFile(getSourceDir(), sourceFileName(className), content);
+    public void writeSourceFile(String baseName, String content) {
+        writeFile(getSourceDir(), sourceFileName(baseName), content);
+    }
+    
+    /**
+     * Generates code for the given Java type.
+     * 
+     * @param type
+     *            type description
+     * @param headers
+     *            collection to which will be added any C++ header defining the
+     *            mapped C++ type
+     */
+    public void generate(Type type, Headers headers) {
+        Generator generator = getGenerator(type);
+        generator.generate();
+                
+        String header = generator.getHeaderFileName();
+        if (header != null) {
+            headers.addHeader(header);
+        }
     }
 }

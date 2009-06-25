@@ -8,18 +8,31 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 /**
  * Generates C++ code for Hessian list.
  */
-public class ListGenerator {
+public class ListGenerator extends AbstractClassGenerator {
+    
     /** C++ container used to represent Hessian list */
-    public static final String CONTAINER = "std::vector";
+    private static final String CONTAINER = "std::vector";
     
     /** header file for C++ container used to represent Hessian list */
     private static final String CONTAINER_HEADER = "vector";
     
-    private GeneratorConfig config;
+    private GeneratorFactory config;
+    private Type elementType;
+    private Generator elementGenerator;
     private StringTemplateGroup group;
     
-    public ListGenerator(GeneratorConfig config) {
+    /**
+     * Constructor
+     * 
+     * @param config
+     *            generator factory
+     * @param elementType
+     *            list element Java type
+     */
+    public ListGenerator(GeneratorFactory config, Type elementType) {
         this.config = config;
+        this.elementType = elementType;
+        this.elementGenerator = config.getGenerator(elementType);
         
         group =  new StringTemplateGroup("listGroup");
     }
@@ -30,44 +43,55 @@ public class ListGenerator {
         template.setAttribute("namespace", config.getNamespace());
         return template;
     }
-    
-    private void addElementHeader(Headers headers, Type elementType) {
-        if (config.isCppPrimitive(elementType)) {
-            return;
-        }
-        if (elementType == Character.class || elementType == String.class) {
-            headers.addStandardHeader("string");
-        } else {
-            Class<?> elementClass = (Class<?>) elementType;
-            headers.addHeader(config.headerFileName(elementClass.getSimpleName()));
-        }
+
+    private String capitalize(String name) {
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
     
-    private void generateHeader(Type elementType) {
-        String className = config.listClassName(elementType);
-        String cppElementType = config.toCppType(elementType);
-        String cppContainerType = config.toCppContainerType(elementType);
+    private String getHeaderFileBaseName() {
+        String baseName = getCppElementType();
+        String[] parts = baseName.split("::");
+        return capitalize(parts[parts.length - 1]) + "List";
+    }
+
+    private String getCppElementType() {
+        return config.getGenerator(elementType).getCppType();
+    }
+    
+    private void generateHeader() {
+        String headerFileBaseName = getHeaderFileBaseName();
+        String cppElementType = getCppElementType();
+        String cppContainerType = getCppType();
 
         Headers headers = new Headers();
-        addElementHeader(headers, elementType);
+        String elementHeader = elementGenerator.getHeaderFileName(); 
+        if (elementHeader != null) {
+            headers.addHeader(elementHeader);
+        }
         headers.addStandardHeader(CONTAINER_HEADER);
         
         StringTemplate header = getTemplate("listHeader", headers);
-        header.setAttribute("guard", config.guardName(className));
+        header.setAttribute("guard", config.guardName(headerFileBaseName));
         header.setAttribute("elementType", cppElementType);
         header.setAttribute("containerType", cppContainerType);
         
         String code = header.toString();
-        config.writeHeaderFile(className, code);
+        config.writeHeaderFile(headerFileBaseName, code);
     }
 
-    /**
-     * Generates C++ code for Hessian list.
-     * 
-     * @param elementType
-     *            list element Java type
-     */
-    public void generate(Type elementType) {
-        generateHeader(elementType);
+    @Override
+    public String getCppType() {
+        Generator elementGenerator = config.getGenerator(elementType);
+        return CONTAINER + '<' + elementGenerator.getCppType() + '>';
+    }
+    
+    @Override
+    public String getHeaderFileName() {
+        return config.headerFileName(getHeaderFileBaseName());
+    }
+    
+    @Override
+    public void generate() {
+        generateHeader();
     }
 }

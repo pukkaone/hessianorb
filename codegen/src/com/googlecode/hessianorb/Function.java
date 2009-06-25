@@ -14,23 +14,35 @@ public class Function {
     private String name;
     private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
     
-    public Function(Method javaMethod, GeneratorConfig config, Headers headers) {
-        SerializableGenerator serializableGenerator =
-                new SerializableGenerator(config);
+    /**
+     * Constructor
+     * 
+     * @param javaMethod
+     *            Java method definition
+     * @param config
+     *            generator factory
+     * @param headers
+     *            collection to which will be added any C++ header defining the
+     *            mapped C++ type
+     */
+    public Function(Method javaMethod, GeneratorFactory config, Headers headers) {
+        Generator returnGenerator = config.getGenerator(javaMethod.getGenericReturnType());
         
-        returnType = config.toCppType(javaMethod.getGenericReturnType());
-        serializableGenerator.generate(javaMethod.getGenericReturnType(), headers);
+        returnType = returnGenerator.getCppType();
+        config.generate(javaMethod.getGenericReturnType(), headers);
         
         name = javaMethod.getName();
         
         int parameterCount = 0;
         for (Type parameterType : javaMethod.getGenericParameterTypes()) {
             ++parameterCount;
+            
+            Generator parameterGenerator = config.getGenerator(parameterType);
             parameters.add(new Parameter(
-                    config.toCppParameterType(parameterType),
+                    parameterGenerator.getCppParameterType(),
                     "param" + parameterCount));
             
-            serializableGenerator.generate(parameterType, headers);
+            config.generate(parameterType, headers);
         }
     }
 

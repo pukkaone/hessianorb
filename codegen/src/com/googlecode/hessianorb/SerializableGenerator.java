@@ -1,23 +1,25 @@
 // $Id$
 package com.googlecode.hessianorb;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
 /**
  * Generates C++ code for Hessian serializable class.
  */
-public class SerializableGenerator {
-    private GeneratorConfig config;
+public class SerializableGenerator extends AbstractClassGenerator {
+    
+    private GeneratorFactory config;
+    private Class<?> serializableClass;
     private StringTemplateGroup group;
     
-    public SerializableGenerator(GeneratorConfig config) {
+    public SerializableGenerator(
+            GeneratorFactory config, Class<?> serializableClass)
+    {
         this.config = config;
+        this.serializableClass = serializableClass;
         
         group =  new StringTemplateGroup("serializableGroup");
     }
@@ -34,7 +36,7 @@ public class SerializableGenerator {
             if (!Modifier.isStatic(modifiers)
              && !Modifier.isTransient(modifiers))
             {
-                generate(field.getGenericType(), headers);
+                config.generate(field.getGenericType(), headers);
             }
         }
     }
@@ -50,10 +52,12 @@ public class SerializableGenerator {
             if (!Modifier.isStatic(modifiers)
              && !Modifier.isTransient(modifiers))
             {
+                Generator fieldGenerator = config.getGenerator(
+                        field.getGenericType());
                 template.setAttribute(
                         "dataMember",
                         new Parameter(
-                                config.toCppType(field.getGenericType()),
+                                fieldGenerator.getCppType(),
                                 field.getName()));
             }
         }
@@ -98,8 +102,19 @@ public class SerializableGenerator {
         String code = serializableSource.toString();
         config.writeSourceFile(className, code);
     }
+
+    @Override
+    public String getCppType() {
+        return config.getNamespace() + "::" + serializableClass.getSimpleName();
+    }
+
+    @Override
+    public String getHeaderFileName() {
+        return config.headerFileName(serializableClass.getSimpleName());
+    }
     
-    private void generate(Class<?> serializableClass) {
+    @Override
+    public void generate() {
         Headers myHeaders = new Headers();
         myHeaders.addHeader("hessian/types.h");
         
@@ -108,65 +123,5 @@ public class SerializableGenerator {
         generateHeader(serializableClass, myHeaders);
 
         generateSource(serializableClass);
-    }
-    
-    private void generateEnum(Class<? extends Enum<?>> enumClass) {
-        EnumGenerator generator = new EnumGenerator(config);
-        generator.generate(enumClass);
-    }
-    
-    /**
-     * If the type is a serializable class, generates the C++ code for it.
-     * 
-     * @param type
-     *            type description
-     * @param headers
-     *            collection to which will be added any headers needed to use
-     *            the serializable class
-     */
-    @SuppressWarnings("unchecked")
-    public void generate(Type type, Headers headers) {
-        if (type == Boolean.TYPE
-         || type == Character.TYPE
-         || type == Double.TYPE
-         || type == Float.TYPE
-         || type == Integer.TYPE
-         || type == Long.TYPE
-         || type == String.class
-         || type == Void.TYPE)
-        {
-            // do nothing
-            
-        } else if (type instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) type;  
-            Type elementType = pt.getActualTypeArguments()[0];
-            
-            ListGenerator generator = new ListGenerator(config);
-            generator.generate(elementType);
-            
-            String header = config.headerFileName(config.listClassName(elementType));
-            headers.addHeader(header);
-        
-        } else if (type instanceof Serializable) {
-            Class<?> serializableClass = (Class<?>) type;
-            if (config.isByteArray(serializableClass)) {
-                // do nothing
-            } else {
-                if (!serializableClass.isEnum()
-                  && serializableClass.getSuperclass().isEnum())
-                {
-                    serializableClass = serializableClass.getSuperclass();
-                }
-                
-                if (serializableClass.isEnum()) {
-                    generateEnum((Class<? extends Enum<?>>) serializableClass);
-                } else {
-                    generate(serializableClass);
-                }
-                
-                String header = config.headerFileName(serializableClass.getSimpleName());
-                headers.addHeader(header);
-            }
-        }
     }
 }

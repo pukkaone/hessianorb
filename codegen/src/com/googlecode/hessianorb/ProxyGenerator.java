@@ -11,14 +11,14 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 public class ProxyGenerator {
     private static final String PROXY_SUFFIX = "Proxy";
     
-    private GeneratorConfig config;
+    private GeneratorFactory config;
     private StringTemplateGroup group;
     private Headers headers = new Headers();
     
     public ProxyGenerator(
             String namespace, String headerDir, String sourceDir)
     {
-        config = new GeneratorConfig(namespace, headerDir, sourceDir);
+        config = new GeneratorFactory(namespace, headerDir, sourceDir);
         group =  new StringTemplateGroup("proxyGroup");
         headers.addHeader("hessian/types.h");
     }

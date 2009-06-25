@@ -7,13 +7,25 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 /**
  * Generates C++ code for enum.
  */
-public class EnumGenerator {
+public class EnumGenerator implements Generator {
     
-    private GeneratorConfig config;
+    private GeneratorFactory config;
+    private Class<? extends Enum<?>> enumClass;
     private StringTemplateGroup group;
-    
-    public EnumGenerator(GeneratorConfig config) {
+
+    /**
+     * Constructor
+     * 
+     * @param config
+     *            generator factory
+     * @param enumClass
+     *            enum definition
+     */
+    public EnumGenerator(
+            GeneratorFactory config, Class<? extends Enum<?>> enumClass)
+    {
         this.config = config;
+        this.enumClass = enumClass;
         
         group =  new StringTemplateGroup("enumGroup");
     }
@@ -56,13 +68,19 @@ public class EnumGenerator {
         config.writeSourceFile(enumName, code);
     }
 
-    /**
-     * Generates C++ code for Hessian list.
-     * 
-     * @param enumClass
-     *            enum description
-     */
-    public void generate(Class<? extends Enum<?>> enumClass) {
+    public String getCppType() {
+        return config.getNamespace() + "::" + enumClass.getSimpleName() + "::Enum";
+    }
+
+    public String getCppParameterType() {
+        return getCppType();
+    }
+
+    public String getHeaderFileName() {
+        return config.headerFileName(enumClass.getSimpleName());
+    }
+    
+    public void generate() {
         generateHeader(enumClass);
         generateSource(enumClass);
     }

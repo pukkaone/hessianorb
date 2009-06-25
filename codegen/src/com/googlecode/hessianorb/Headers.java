@@ -21,10 +21,6 @@ public class Headers extends TreeSet<String> {
     public Headers(Headers right) {
         addAll(right);
     }
-
-    private String quote(String name) {
-        return '"' + name + '"';
-    }
     
     /**
      * Adds user-defined header file name.
@@ -33,17 +29,7 @@ public class Headers extends TreeSet<String> {
      *            header file name.
      */
     public void addHeader(String name) {
-        add(quote(name));
-    }
-    
-    /**
-     * Removes user-defined header file name.
-     * 
-     * @param name
-     *            header file name.
-     */
-    public void removeHeader(String name) {
-        remove(quote(name));
+        add('"' + name + '"');
     }
     
     /**
