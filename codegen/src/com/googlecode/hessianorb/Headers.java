@@ -23,13 +23,17 @@ public class Headers extends TreeSet<String> {
     }
     
     /**
-     * Adds user-defined header file name.
+     * Adds header file name.
      * 
      * @param name
      *            header file name.
      */
     public void addHeader(String name) {
-        add('"' + name + '"');
+        if (name.startsWith("<")) {
+            add(name);
+        } else {
+            add('"' + name + '"');
+        }
     }
     
     /**

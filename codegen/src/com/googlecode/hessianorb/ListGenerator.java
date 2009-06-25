@@ -49,18 +49,21 @@ public class ListGenerator extends AbstractClassGenerator {
     }
     
     private String getHeaderFileBaseName() {
-        String baseName = getCppElementType();
-        String[] parts = baseName.split("::");
-        return capitalize(parts[parts.length - 1]) + "List";
-    }
+        String cppElementType = elementGenerator.getCppType();
+        String[] parts = cppElementType.split("::");
 
-    private String getCppElementType() {
-        return config.getGenerator(elementType).getCppType();
+        // Skip the Enum part in the C++ enum mapped type name.
+        int i = parts.length - 1;
+        if (i > 0 && parts[i].equals("Enum")) {
+            --i;
+        }
+
+        return capitalize(parts[i]) + "List";
     }
     
     private void generateHeader() {
         String headerFileBaseName = getHeaderFileBaseName();
-        String cppElementType = getCppElementType();
+        String cppElementType = elementGenerator.getCppType();
         String cppContainerType = getCppType();
 
         Headers headers = new Headers();
@@ -81,7 +84,6 @@ public class ListGenerator extends AbstractClassGenerator {
 
     @Override
     public String getCppType() {
-        Generator elementGenerator = config.getGenerator(elementType);
         return CONTAINER + '<' + elementGenerator.getCppType() + '>';
     }
     
