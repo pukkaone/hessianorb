@@ -76,8 +76,8 @@ public class EnumGenerator implements Generator {
         return getCppType();
     }
 
-    public String getHeaderFileName() {
-        return config.headerFileName(enumClass.getSimpleName());
+    public void includeHeader(Headers headers) {
+        headers.addHeader(config.headerFileName(enumClass.getSimpleName()));
     }
     
     public void generate() {

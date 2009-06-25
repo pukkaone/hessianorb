@@ -173,10 +173,6 @@ public class GeneratorFactory {
     public void generate(Type type, Headers headers) {
         Generator generator = getGenerator(type);
         generator.generate();
-                
-        String header = generator.getHeaderFileName();
-        if (header != null) {
-            headers.addHeader(header);
-        }
+        generator.includeHeader(headers);
     }
 }

@@ -14,10 +14,9 @@ public class ListGenerator extends AbstractClassGenerator {
     private static final String CONTAINER = "std::vector";
     
     /** header file for C++ container used to represent Hessian list */
-    private static final String CONTAINER_HEADER = "vector";
+    private static final String CONTAINER_HEADER = "<vector>";
     
     private GeneratorFactory config;
-    private Type elementType;
     private Generator elementGenerator;
     private StringTemplateGroup group;
     
@@ -31,7 +30,6 @@ public class ListGenerator extends AbstractClassGenerator {
      */
     public ListGenerator(GeneratorFactory config, Type elementType) {
         this.config = config;
-        this.elementType = elementType;
         this.elementGenerator = config.getGenerator(elementType);
         
         group =  new StringTemplateGroup("listGroup");
@@ -67,11 +65,8 @@ public class ListGenerator extends AbstractClassGenerator {
         String cppContainerType = getCppType();
 
         Headers headers = new Headers();
-        String elementHeader = elementGenerator.getHeaderFileName(); 
-        if (elementHeader != null) {
-            headers.addHeader(elementHeader);
-        }
-        headers.addStandardHeader(CONTAINER_HEADER);
+        elementGenerator.includeHeader(headers); 
+        headers.addHeader(CONTAINER_HEADER);
         
         StringTemplate header = getTemplate("listHeader", headers);
         header.setAttribute("guard", config.guardName(headerFileBaseName));
@@ -88,8 +83,8 @@ public class ListGenerator extends AbstractClassGenerator {
     }
     
     @Override
-    public String getHeaderFileName() {
-        return config.headerFileName(getHeaderFileBaseName());
+    public void includeHeader(Headers headers) {
+        headers.addHeader(config.headerFileName(getHeaderFileBaseName()));
     }
     
     @Override

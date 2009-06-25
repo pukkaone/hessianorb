@@ -17,11 +17,10 @@ public class PrimitiveGenerator implements Generator {
     }
 
     public String getCppParameterType() {
-        return cppType;
+        return getCppType();
     }
 
-    public String getHeaderFileName() {
-        return null;
+    public void includeHeader(Headers headers) {
     }
 
     public void generate() {

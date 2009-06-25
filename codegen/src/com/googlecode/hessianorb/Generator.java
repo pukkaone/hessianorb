@@ -21,12 +21,13 @@ public interface Generator {
     String getCppParameterType();
     
     /**
-     * Gets C++ header file name that defines this C++ type.
+     * Adds any C++ header defining this C++ type to the header collection.
      * 
-     * @return header file name, or {@code null} if this C++ type does not have
-     *         a header file
+     * @param headers
+     *            collection to which will be added any C++ header defining the
+     *            C++ type
      */
-    String getHeaderFileName();
+    void includeHeader(Headers headers);
     
     /**
      * Generates code.

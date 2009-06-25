@@ -109,8 +109,9 @@ public class SerializableGenerator extends AbstractClassGenerator {
     }
 
     @Override
-    public String getHeaderFileName() {
-        return config.headerFileName(serializableClass.getSimpleName());
+    public void includeHeader(Headers headers) {
+        headers.addHeader(
+                config.headerFileName(serializableClass.getSimpleName()));
     }
     
     @Override

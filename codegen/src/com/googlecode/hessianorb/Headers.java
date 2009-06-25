@@ -23,7 +23,9 @@ public class Headers extends TreeSet<String> {
     }
     
     /**
-     * Adds header file name.
+     * Adds header file name.  If the name is surrounded by angle brackets,
+     * adds the name exactly as given to the collection, otherwise surrounds
+     * the name with quotes before adding to the collection.
      * 
      * @param name
      *            header file name.
@@ -34,15 +36,5 @@ public class Headers extends TreeSet<String> {
         } else {
             add('"' + name + '"');
         }
-    }
-    
-    /**
-     * Adds system-defined header file name.
-     * 
-     * @param name
-     *            header file name.
-     */
-    public void addStandardHeader(String name) {
-        add('<' + name + '>');
     }
 }

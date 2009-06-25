@@ -21,15 +21,20 @@ public class ClassGenerator extends AbstractClassGenerator {
         this.cppType = cppType;
         this.headerFileName = headerFileName;
     }
-            
+        
+    @Override
     public String getCppType() {
         return cppType;
     }
     
-    public String getHeaderFileName() {
-        return headerFileName;
+    @Override
+    public void includeHeader(Headers headers) {
+        if (headerFileName != null) {
+            headers.addHeader(headerFileName);
+        }
     }
 
+    @Override
     public void generate() {
     }
 }
