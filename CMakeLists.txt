@@ -15,7 +15,6 @@ add_subdirectory(testing/src)
 
 # common Ant scripts
 copy_file(default.properties ${PROJECT_BINARY_DIR}/default.properties)
-copy_file(property.xml ${PROJECT_BINARY_DIR}/property.xml)
 copy_file(target.xml ${PROJECT_BINARY_DIR}/target.xml)
 
 # code generator
@@ -51,13 +50,13 @@ set(CPACK_SOURCE_IGNORE_FILES "/\\\\.svn/;/build/")
 if(WIN32)
     set(CPACK_GENERATOR ZIP)
     set(CPACK_SOURCE_GENERATOR ZIP)
-else(WIN32)
+else()
     set(CPACK_GENERATOR TGZ)
     set(CPACK_SOURCE_GENERATOR TGZ)
-endif(WIN32)
+endif()
 include(CPack)
 
-# Create a Subversion tag for the release.
+# Target "promote" creates a Subversion tag for the release.
 find_package(Subversion)
 if(Subversion_FOUND)
     Subversion_WC_INFO(${CMAKE_SOURCE_DIR} SVN)

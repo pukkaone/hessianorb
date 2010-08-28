@@ -5,16 +5,14 @@
   </description>  
 
   <property name="top.dir" location=".."/>  
-  <import file="${top.dir}/property.xml"/>
+  <import file="${top.dir}/target.xml"/>
 
-  <!-- classpath for compiling -->
+  <!-- classpath for compiling main code -->
   <path id="compile.classpath">
     <fileset dir="${lib.dir}">
       <include name="*.jar"/>
     </fileset>
   </path>
-
-  <import file="${top.dir}/target.xml"/>
    
   <!-- Initialize build directory structure. -->
   <target name="init">
@@ -24,7 +22,7 @@
     <mkdir dir="${dist.dir}"/>
   </target>
 
-  <!-- Compile code -->
+  <!-- Compile main code -->
   <target name="compile" depends="init">
     <javac
         srcdir="${src.dir}"

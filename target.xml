@@ -1,6 +1,15 @@
 <!-- $Id$ -->
 <project name="target">
 
+  <!--
+   To override any default properties, create a custom.properties file
+   in your local directory containing the new properties.
+  -->
+  <property file="${top.dir}/custom.properties"/>
+
+  <!-- Load default properties. -->
+  <property file="${top.dir}/default.properties"/>
+
   <!-- Get Subversion last committed revision. -->
   <target name="revision">
     <exec

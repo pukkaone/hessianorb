@@ -5,22 +5,20 @@
   </description>  
 
   <property name="top.dir" location="../.."/>  
-  <import file="${top.dir}/property.xml"/>
+  <import file="${top.dir}/target.xml"/>
 
-  <!-- classpath for compiling -->
+  <!-- classpath for compiling main code -->
   <path id="compile.classpath">
     <fileset dir="${lib.dir}">
       <include name="*.jar"/>
     </fileset>
   </path>
 
-  <!-- classpath for running -->
+  <!-- classpath for running main code -->
   <path id="run.classpath">
     <path refid="compile.classpath"/>
     <pathelement location="${classes.dir}"/>
   </path>
-
-  <import file="${top.dir}/target.xml"/>
 
   <!-- Create the build directory structure. -->
   <target name="init">
