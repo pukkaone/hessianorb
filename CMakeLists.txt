@@ -50,18 +50,18 @@ set(CPACK_SOURCE_IGNORE_FILES "/\\\\.svn/;/build/")
 if(WIN32)
     set(CPACK_GENERATOR ZIP)
     set(CPACK_SOURCE_GENERATOR ZIP)
-else()
+else(WIN32)
     set(CPACK_GENERATOR TGZ)
     set(CPACK_SOURCE_GENERATOR TGZ)
-endif()
+endif(WIN32)
 include(CPack)
 
 # Target "promote" creates a Subversion tag for the release.
 find_package(Subversion)
-if(Subversion_FOUND)
+if(Subversion_FOUND AND NOT (SVN_REVISION STREQUAL "exported"))
     Subversion_WC_INFO(${CMAKE_SOURCE_DIR} SVN)
     add_custom_target(promote
             COMMAND svn copy -m "Release ${CPACK_PACKAGE_VERSION}"
                     ${SVN_WC_URL}
                     ${SVN_WC_ROOT}/tags/release-${CPACK_PACKAGE_VERSION})
-endif(Subversion_FOUND)
+endif()

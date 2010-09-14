@@ -5,7 +5,7 @@
 
 macro(configure_files srcDir destDir)
     message(STATUS "Configuring directory ${destDir}")
-    make_directory(${destDir})
+    file(MAKE_DIRECTORY ${destDir})
 
     file(GLOB templateFiles RELATIVE ${srcDir} ${srcDir}/*)
     foreach(templateFile ${templateFiles})
