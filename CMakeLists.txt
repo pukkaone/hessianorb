@@ -1,11 +1,11 @@
 # $Id$
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 2.6)
 
 project(hessianorb)
 include(macros.cmake)
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 enable_testing()
 
@@ -18,7 +18,7 @@ copy_file(default.properties ${PROJECT_BINARY_DIR}/default.properties)
 copy_file(target.xml ${PROJECT_BINARY_DIR}/target.xml)
 
 # code generator
-set(HESSIANC_EXE ${EXECUTABLE_OUTPUT_PATH}/hessianc)
+set(HESSIANC_EXE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hessianc)
 add_subdirectory(codegen)
 
 # runtime library

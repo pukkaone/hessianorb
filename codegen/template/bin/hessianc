@@ -1,4 +1,4 @@
 #!/bin/sh
 # $Id$
 
-java -jar @LIBRARY_OUTPUT_PATH@/hessianc.jar $*
+java -jar @CMAKE_LIBRARY_OUTPUT_DIRECTORY@/hessianc.jar $*
