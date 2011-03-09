@@ -30,7 +30,8 @@
         classpathref="compile.classpath"
         debug="on"
         source="${javac.target}"
-        target="${javac.target}"/>
+        target="${javac.target}"
+        includeantruntime="false"/>
 
     <copy todir="${classes.dir}">
       <fileset dir="${src.dir}">

@@ -45,7 +45,8 @@
         classpathref="test.compile.classpath"
         debug="on"
         source="${javac.target}"
-        target="${javac.target}"/>
+        target="${javac.target}"
+        includeantruntime="false"/>
 
     <copy todir="${test.classes.dir}">
       <fileset dir="${test.src.dir}">
