@@ -4,8 +4,12 @@ cmake_minimum_required(VERSION 2.8)
 project(hessianorb)
 include(macros.cmake)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
+        ${CMAKE_BINARY_DIR}/lib
+        CACHE PATH "Single directory for all static libraries")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
+        ${CMAKE_BINARY_DIR}/bin
+        CACHE PATH "Single directory for all executables")
 
 enable_testing()
 
@@ -48,8 +52,8 @@ set(CPACK_SOURCE_IGNORE_FILES "/\\\\.svn/;/build/")
 if(WIN32)
     set(CPACK_GENERATOR ZIP)
     set(CPACK_SOURCE_GENERATOR ZIP)
-else(WIN32)
+else()
     set(CPACK_GENERATOR TGZ)
     set(CPACK_SOURCE_GENERATOR TGZ)
-endif(WIN32)
+endif()
 include(CPack)
